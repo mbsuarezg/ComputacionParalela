@@ -1,3 +1,2 @@
-# Práctica1 computación paralela y distribuida
-
+# Computación paralela y distribuida 2020-2
 Miembros: mbsuarezg - cdrinconm - svelandiac
