@@ -1,5 +1,5 @@
 //g++ reduccionImagen.cpp -o x `pkg-config --cflags --libs opencv` -lpthread
-//./x clouds.jpg clouds_480p.jpg 1
+//./x clouds.jpg clouds_480p.jpg 16
 
 #include <bits/stdc++.h>
 #include <pthread.h>
@@ -53,20 +53,6 @@ void* downSizeImage(void* id){
             ResizedImage.at<Vec3b>(i, j)[0] = OriginalIimage.at<Vec3b>(xoffset, yoffset)[0];
             ResizedImage.at<Vec3b>(i, j)[1] = OriginalIimage.at<Vec3b>(xoffset, yoffset)[1];
             ResizedImage.at<Vec3b>(i, j)[2] = OriginalIimage.at<Vec3b>(xoffset, yoffset)[2];
-
-            /*
-            blue = 0, green = 0, red = 0;
-            for(int x = xoffset; x < xoffset + xgap; ++x){
-                for(int y = yoffset; y < yoffset + ygap; ++y){
-                    blue += (double)OriginalIimage.at<Vec3b>(x, y)[0] * fraq;
-                    green += (double)OriginalIimage.at<Vec3b>(x, y)[1] * fraq;
-                    red += (double)OriginalIimage.at<Vec3b>(x, y)[2] * fraq;
-                }
-            }
-            ResizedImage.at<Vec3b>(i, j)[0] = blue;
-            ResizedImage.at<Vec3b>(i, j)[1] = green;
-            ResizedImage.at<Vec3b>(i, j)[2] = red;
-            */
         }
     }
     return 0;
@@ -97,7 +83,7 @@ int main(int argc, char** argv){
     for(int i = 0; i < total_threads; ++i){
         int current_thread =pthread_create(&my_threads[i], NULL, downSizeImage, &re[i]);
         if(current_thread != 0){
-            perror("\nError al crear el hilo\n");
+            perror("\nError al crear el hilo");
             exit(-1);
         }
     }
@@ -111,9 +97,11 @@ int main(int argc, char** argv){
     duration<double, milli> total_time = (end - start);
 
     fout << fixed << setprecision(9);
-    fout << "\nNúmero de hilos: " << total_threads << '\n';
+    fout << "----------------------------------------------------------------------------\n";
+    fout << "Número de hilos: " << total_threads << '\n';
     fout << "Tiempo de respuesta: " << total_time.count() / 1000 << '\n';
-    fout << "Dimensiones de la imagen de entrada: ancho:" << OriginalIimage.cols << " alto:" << OriginalIimage.rows << "\n\n";
+    fout << "Dimensiones de la imagen de entrada: " << OriginalIimage.rows << "," << OriginalIimage.cols << "\n";
+    fout << "----------------------------------------------------------------------------\n\n";
 
     free(re);
     free(my_threads);
