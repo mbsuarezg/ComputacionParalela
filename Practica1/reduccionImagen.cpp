@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include <pthread.h>
+#include <fstream>
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/opencv.hpp>
@@ -11,7 +12,7 @@ using namespace std;
 using namespace chrono;
 using namespace cv;
 
-int total_threads;
+int total_threads, pow_threads;
 
 Mat OriginalIimage;
 Mat ResizedImage;
@@ -26,6 +27,16 @@ const double fraq = 1.0 / double(total);
 
 int* re;
 pthread_t* my_threads;
+
+int fpow(int a, int b){
+    int res = 1;
+    while(b){
+        if(b & 1) res *= a;
+        a *= a;
+        b >>= 1;
+    }
+    return res;
+}
 
 void* downSizeImage(void* id){
 
@@ -66,8 +77,12 @@ int main(int argc, char** argv){
     char* input_name = argv[1];
     char* output_name = argv[2];
     char* num_threads = argv[3];
-    total_threads = atoi(num_threads);
+    pow_threads = atoi(num_threads);
+    total_threads = fpow(2, pow_threads);
 
+    ofstream fout;
+    fout.open("informe.txt", ios_base::app);
+    
     OriginalIimage = imread(input_name);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
     if(!OriginalIimage.data){
@@ -90,15 +105,15 @@ int main(int argc, char** argv){
     for(int i = 0; i < total_threads; ++i){
         pthread_join(my_threads[i], NULL);
     }
+
+    imwrite(output_name, ResizedImage);
     auto end = high_resolution_clock::now();
     duration<double, milli> total_time = (end - start);
 
-    imwrite(output_name, ResizedImage);
-
-    cout << fixed << setprecision(9);
-    cout << "\nNúmero de hilos: " << total_threads << '\n';
-    cout << "Tiempo de respuesta: " << total_time.count() / 1000 << '\n';
-    cout << "Dimensiones de la imagen de entrada: ancho:" << OriginalIimage.cols << " alto:" << OriginalIimage.rows << "\n\n";
+    fout << fixed << setprecision(9);
+    fout << "\nNúmero de hilos: " << total_threads << '\n';
+    fout << "Tiempo de respuesta: " << total_time.count() / 1000 << '\n';
+    fout << "Dimensiones de la imagen de entrada: ancho:" << OriginalIimage.cols << " alto:" << OriginalIimage.rows << "\n\n";
 
     free(re);
     free(my_threads);
