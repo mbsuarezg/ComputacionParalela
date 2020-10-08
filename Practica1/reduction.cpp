@@ -1,6 +1,3 @@
-//g++ reduction.cpp -o x `pkg-config --cflags --libs opencv` -lpthread
-//./x clouds.jpg clouds_480p.jpg 16
-
 #include <bits/stdc++.h>
 #include <pthread.h>
 #include <fstream>
@@ -12,7 +9,7 @@ using namespace std;
 using namespace chrono;
 using namespace cv;
 
-int total_threads, pow_threads;
+int total_threads;
 
 Mat OriginalIimage;
 Mat ResizedImage;
@@ -63,13 +60,14 @@ int main(int argc, char** argv){
     char* input_name = argv[1];
     char* output_name = argv[2];
     char* num_threads = argv[3];
-    pow_threads = atoi(num_threads);
-    total_threads = fpow(2, pow_threads);
+    total_threads = atoi(num_threads);
+    string nombre_entrada(input_name);
+    nombre_entrada = "./images/" + nombre_entrada;
 
     ofstream fout;
     fout.open("informe.txt", ios_base::app);
     
-    OriginalIimage = imread(input_name);
+    OriginalIimage = imread(nombre_entrada);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
     if(!OriginalIimage.data){
         return cout << "Couldn't open or find the image\n", -1;
