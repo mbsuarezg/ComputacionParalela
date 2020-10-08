@@ -1,4 +1,4 @@
-//g++ reduccionImagen.cpp -o x `pkg-config --cflags --libs opencv` -lpthread
+//g++ reduction.cpp -o x `pkg-config --cflags --libs opencv` -lpthread
 //./x clouds.jpg clouds_480p.jpg 16
 
 #include <bits/stdc++.h>
@@ -100,7 +100,7 @@ int main(int argc, char** argv){
     fout << "----------------------------------------------------------------------------\n";
     fout << "Número de hilos: " << total_threads << '\n';
     fout << "Tiempo de respuesta: " << total_time.count() / 1000 << '\n';
-    fout << "Dimensiones de la imagen de entrada: " << OriginalIimage.rows << "," << OriginalIimage.cols << "\n";
+    fout << "Dimensiones de la imagen de entrada: " << OriginalIimage.cols << "," << OriginalIimage.rows << "\n";
     fout << "----------------------------------------------------------------------------\n\n";
 
     free(re);
