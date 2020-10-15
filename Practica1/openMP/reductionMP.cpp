@@ -17,14 +17,6 @@ Mat ResizedImage;
 const int output_height = 480;
 const int output_width = 720;
 
-const int xgap = (OriginalIimage.rows + output_height - 1) / output_height;
-const int ygap = (OriginalIimage.cols + output_width - 1) / output_width;
-const int total = xgap * ygap;
-const double fraq = 1.0 / double(total);
-
-int* re;
-pthread_t* my_threads;
-
 void* downSizeImage(int omp_id){
 
     int start = omp_id * (output_height / total_threads);

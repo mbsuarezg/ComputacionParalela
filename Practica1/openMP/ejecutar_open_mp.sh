@@ -11,4 +11,4 @@ do
         g++ reductionMP.cpp `pkg-config --cflags --libs opencv` -fopenmp -o x && ./x $(basename $file) 480p_version_of_$(basename $file) ${i}
     done
 done
-cat informe.txt
+cat informeOMP.txt
