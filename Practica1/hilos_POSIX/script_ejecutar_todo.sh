@@ -11,4 +11,3 @@ do
         g++ reduction.cpp -o x `pkg-config --cflags --libs opencv` -lpthread && ./x $(basename $file) 480p_version_of_$(basename $file) ${i}
     done
 done
-cat informe.txt
