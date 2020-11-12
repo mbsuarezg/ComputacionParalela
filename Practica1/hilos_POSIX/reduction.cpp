@@ -26,11 +26,13 @@ pthread_t* my_threads;
 void* downSizeImage(void* id){
 
     int thread_id = *(int*) id;
-    int start = thread_id * (output_height / total_threads);
-    int end = (thread_id + 1) * (output_height / total_threads);
-
-    for(int i = start; i < end; ++i){
-        for(int j = 0; j < output_width; ++j){
+    int val = (output_width + total_threads - 1) / total_threads;
+    int start = thread_id * (val);
+    int end = min(output_width, (thread_id + 1) * val);
+    //printf("\nThread id: %d start: %d end: %d \n", thread_id, start, end);
+    
+    for(int i = 0; i < output_height; ++i){
+        for(int j = start; j < end; ++j){
 
             //representative corner
             int xoffset = (OriginalIimage.rows * i) / output_height;
@@ -59,7 +61,7 @@ int main(int argc, char** argv){
     OriginalIimage = imread(nombre_entrada);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
     if(!OriginalIimage.data){
-        return cout << "Couldn't open or find the image\n", -1;
+        return cout << "Couldn't open or find the image" << ' ' << nombre_entrada << '\n', -1;
     }
     
     og_image = (unsigned char*) malloc(OriginalIimage.rows * OriginalIimage.cols * 3 * sizeof(unsigned char));
