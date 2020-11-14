@@ -43,10 +43,9 @@ __global__ void downSizeImage(const unsigned char *original, unsigned char *resi
     int end = min(h * w, (idx + 1) * ((h * w + all_threats - 1) / all_threats));
 
     for(int i = start; i < end; ++i){
-        int a = (H * (i / w)) / h;
-        int b = (W * (i % w)) / w;
+        #pragma unroll
         for(int k = 0; k < 3; ++k){
-            *(resized + i*3 + k) = *(original + (a*W + b)*3 + k);
+            *(resized + i*3 + k) = *(original + (((H * (i / w)) / h)*W + ((W * (i % w)) / w))*3 + k);
         }
     }
 
@@ -111,7 +110,8 @@ int main(int argc, char** argv){
     err = cudaMemcpy(d_Resized, d_Original, re_size, cudaMemcpyHostToDevice);
     my_cudaError(err, "Fallo en el memcpy del devie para la imagen de salida");
 
-    // Start cuda timer
+    // Start timers
+    auto beginning = high_resolution_clock::now();
     cudaEventRecord(start);
 
     //-------------------------------------- Launch the downsize CUDA Kernel-----------------------------------------
@@ -119,7 +119,9 @@ int main(int argc, char** argv){
     downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, OriginalImage.cols, OriginalImage.rows, output_width, output_height, all_threats);
     //----------------------------------------------------------------------------------------------------------------
 
-    // Stop cuda timer
+    // Stop timers
+    auto end = high_resolution_clock::now();
+    duration<double, milli> total_time = (end - beginning);
     cudaEventRecord(stop);
 
     // Copy the device result array in device memory to the host result array in host memory
@@ -151,9 +153,11 @@ int main(int argc, char** argv){
 
     //Prints
     printf("Done\n");
-    fout << fixed << setprecision(9);
+    fout << fixed << setprecision(12);
     fout << "----------------------------------------------------------------------------\n";
-    fout << "Número de hilos: " << all_threats << " número de bloques: " << total_blocks << " número de hilos por bloque: " << total_threads << '\n';
+    fout << "Número de bloques: " << total_blocks << '\n';
+    fout << "Número de hilos por bloque: " << total_threads << '\n';
+    fout << "Número total de hilos: " << all_threats << '\n';
     fout << "Tiempo de respuesta (CUDA): " << milliseconds / 1000 << '\n';
     fout << "Dimensiones de la imagen de entrada: " << OriginalImage.cols << "," << OriginalImage.rows << "\n";
     fout << "----------------------------------------------------------------------------\n\n";

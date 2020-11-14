@@ -1,11 +1,11 @@
 #!/bin/bash
 clear
-cd ..
 CWD=$(pwd)
-echo $CWD
-cd hilos_POSIX/
+cd ..
+IWD=$(pwd)
+cd $CWD
 g++ reduction.cpp -o x `pkg-config --cflags --libs opencv` -lpthread
-for file in $CWD/images/*
+for file in $IWD/images/*
 do
     for ((i = 1; i <= 16; i = i * 2))
     do  
