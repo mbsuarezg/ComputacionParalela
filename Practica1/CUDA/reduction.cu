@@ -1,10 +1,6 @@
-//nvcc reduction.cu -o x -gencode arch=compute_35,code=compute_35 `pkg-config --cflags --libs opencv`
-//./x "waterfallsa_720p.jpg" "cuda_test.jpg" 8 8
 //GTX 750, ( 4) Multiprocessors, (192) CUDA Cores/MP: 768 CUDA Cores
-
-#include <bits/stdc++.h>
-
 // OpenCV and I/O libraries
+#include <bits/stdc++.h>
 #include <fstream>
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/core.hpp>
@@ -20,6 +16,7 @@ using namespace cv;
 
 int total_blocks;
 int total_threads;
+int all_threats;
 
 Mat OriginalImage;
 Mat ResizedImage;
@@ -53,13 +50,15 @@ __global__ void downSizeImage(const unsigned char *original, unsigned char *resi
 
 /* Host main routine */
 int main(int argc, char** argv){
-    //command line input
+
+    // Command line input
     char* input_name = argv[1];
     char* output_name = argv[2];
     char* num_blocks = argv[3];
     char* num_threads = argv[4];
     total_blocks = atoi(num_blocks);
     total_threads = atoi(num_threads);
+    all_threats = total_blocks * total_threads;
     string nombre_entrada(input_name);
     nombre_entrada = "../images/" + nombre_entrada;
 
@@ -70,7 +69,7 @@ int main(int argc, char** argv){
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     
-    //read images
+    // Read images
     OriginalImage = imread(nombre_entrada);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
     if(!OriginalImage.data){
@@ -110,16 +109,11 @@ int main(int argc, char** argv){
     err = cudaMemcpy(d_Resized, d_Original, re_size, cudaMemcpyHostToDevice);
     my_cudaError(err, "Fallo en el memcpy del devie para la imagen de salida");
 
-    // Start cuda timer
-    cudaEventRecord(start);
-
     //-------------------------------------- Launch the downsize CUDA Kernel-----------------------------------------
-    int all_threats = total_blocks * total_threads;
+    cudaEventRecord(start);
     downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, OriginalImage.cols, OriginalImage.rows, output_width, output_height, all_threats);
-    //----------------------------------------------------------------------------------------------------------------
-
-    // Stop cuda timer
     cudaEventRecord(stop);
+    //----------------------------------------------------------------------------------------------------------------
 
     // Copy the device result array in device memory to the host result array in host memory
     err = cudaMemcpy(h_Resized, d_Resized, re_size, cudaMemcpyDeviceToHost);
@@ -131,12 +125,12 @@ int main(int argc, char** argv){
             }
         }
     }
+    imwrite(output_name, ResizedImage);
 
     //Gather cuda time
     cudaEventSynchronize(stop);
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
-    imwrite(output_name, ResizedImage);
 
     // Free device global memory
     err = cudaFree(d_Original);
@@ -148,8 +142,7 @@ int main(int argc, char** argv){
     free(h_Original);
     free(h_Resized);
 
-    //Prints
-    printf("Done\n");
+    // Prints
     fout << fixed << setprecision(12);
     fout << "----------------------------------------------------------------------------\n";
     fout << "Número de bloques: " << total_blocks << '\n';
