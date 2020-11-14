@@ -31,21 +31,14 @@ void* downSizeImage(void* id){
     int w = output_width;
     
     int thread_id = *(int*) id;
-    int total = h * w;
-    int val = (total + total_threads - 1) / total_threads;
-    int start = thread_id * (val);
-    int end = min(total, (thread_id + 1) * val);
-
-    int yoffset = (H + h - 1) / h;
-    int xoffset = (W + w - 1) / w;
+    int start = thread_id * ((h * w + total_threads - 1) / total_threads);
+    int end = min(h * w, (thread_id + 1) * ((h * w + total_threads - 1) / total_threads));
 
     for(int i = start; i < end; ++i){
         int a = (H * (i / w)) / h;
         int b = (W * (i % w)) / w;
-        int x = (a*W + b) * 3;
-        int r = i * 3;
         for(int k = 0; k < 3; ++k){
-            *(dest_image + r + k) = *(og_image + x + k);
+            *(dest_image + i*3 + k) = *(og_image + (a*W + b)*3 + k);
         }
     }
     return 0;

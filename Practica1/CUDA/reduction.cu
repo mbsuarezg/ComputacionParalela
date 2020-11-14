@@ -1,5 +1,7 @@
-//nvcc test.cu -o x -gencode arch=compute_35,code=compute_35 `pkg-config --cflags --libs opencv`
-//./x
+//nvcc reduction.cu -o x -gencode arch=compute_35,code=compute_35 `pkg-config --cflags --libs opencv`
+//./x "waterfallsa_720p.jpg" "cuda_test.jpg" 8 8
+//GTX 750, ( 4) Multiprocessors, (192) CUDA Cores/MP: 768 CUDA Cores
+
 #include <bits/stdc++.h>
 
 // OpenCV and I/O libraries
@@ -19,7 +21,7 @@ using namespace cv;
 int total_blocks;
 int total_threads;
 
-Mat OriginalIimage;
+Mat OriginalImage;
 Mat ResizedImage;
 
 const int output_height = 480;
@@ -35,21 +37,19 @@ void my_cudaError(cudaError_t err, string errorMessage){
 }
 
 __global__ void downSizeImage(const unsigned char *original, unsigned char *resized, int W, int H, int w, int h, int all_threats){
+
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
-    int val = (w + all_threats - 1) / all_threats;
-    int start = idx * val;
-    int end = min(w, (idx + 1) * val);
-    
-    for(int i = 0; i < h; ++i){
-        for(int j = start; j < end; ++j){
-            int xoffset = (idx * H) / h;
-            int yoffset = (idx * W) / w;
-            for(int k = 0; k < 3; ++k){
-                *(resized + (i*3*w + j*3 + k)) = *(original + (xoffset*3*w + yoffset*3 + k));
-            }
+    int start = idx * ((h * w + all_threats - 1) / all_threats); 
+    int end = min(h * w, (idx + 1) * ((h * w + all_threats - 1) / all_threats));
+
+    for(int i = start; i < end; ++i){
+        int a = (H * (i / w)) / h;
+        int b = (W * (i % w)) / w;
+        for(int k = 0; k < 3; ++k){
+            *(resized + i*3 + k) = *(original + (a*W + b)*3 + k);
         }
-    }    
-    
+    }
+
 }
 
 /* Host main routine */
@@ -67,54 +67,60 @@ int main(int argc, char** argv){
     ofstream fout;
     fout.open("informe.txt", ios_base::app);
     cudaError_t err = cudaSuccess;
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
     
     //read images
-    OriginalIimage = imread(nombre_entrada);
+    OriginalImage = imread(nombre_entrada);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
-    if(!OriginalIimage.data){
+    if(!OriginalImage.data){
         return cout << "\nCouldn't open or find the image\n", -1;
     }
-    size_t og_size = OriginalIimage.cols * OriginalIimage.rows * 3 * sizeof(unsigned char);
+    size_t og_size = OriginalImage.cols * OriginalImage.rows * 3 * sizeof(unsigned char);
     size_t re_size = output_height * output_width * 3 * sizeof(unsigned char);
 
     // Allocate the host variables
     h_Original = (unsigned char*) malloc(og_size);
     h_Resized = (unsigned char*) malloc(re_size);
     if(!h_Original or !h_Resized){
-        perror("\nError en el malloc de las imagenes");
+        perror("\nError en el malloc de las imagenes en host");
         exit(-1);
     }
 
     // Initialize the host input array
-    for(int i = 0; i < OriginalIimage.rows; ++i){
-        for(int j = 0; j < OriginalIimage.cols; ++j){
+    for(int i = 0; i < OriginalImage.rows; ++i){
+        for(int j = 0; j < OriginalImage.cols; ++j){
             for(int k = 0; k < 3; ++k){
-                *(h_Original + (i*OriginalIimage.cols*3 + j*3 + k)) = OriginalIimage.at<Vec3b>(i, j)[k];
+                *(h_Original + (i*OriginalImage.cols*3 + j*3 + k)) = OriginalImage.at<Vec3b>(i, j)[k];
             }
         }
     }
 
-    // Allocate the device input vector A
+    // Allocate the device input arrays
     unsigned char* d_Original;
     unsigned char* d_Resized;
-    err = cudaMalloc((void **)&d_Original, OriginalIimage.rows * OriginalIimage.cols * 3 * sizeof (unsigned char));
-    my_cudaError(err, "Fallo el malloc en el device de el array de la imagen original");
-
-    err = cudaMalloc((void **)&d_Resized, output_height * output_width * 3 * sizeof(unsigned char));
-    my_cudaError(err, "Fallo el malloc en el device de el array de la imagen de salida");    
+    err = cudaMalloc((void **)&d_Original, og_size);
+    my_cudaError(err, "Fallo el malloc en el device del array de la imagen original");
+    err = cudaMalloc((void **)&d_Resized, re_size);
+    my_cudaError(err, "Fallo el malloc en el device del array de la imagen de salida");    
 
     // Copy the host input vectors A and B in host memory to the device input vectors in device memory
     err = cudaMemcpy(d_Original, h_Original, og_size, cudaMemcpyHostToDevice);
     my_cudaError(err, "Fallo en el memcpy del devie para la imagen original");
-
     err = cudaMemcpy(d_Resized, d_Original, re_size, cudaMemcpyHostToDevice);
     my_cudaError(err, "Fallo en el memcpy del devie para la imagen de salida");
 
+    // Start cuda timer
+    cudaEventRecord(start);
+
     //-------------------------------------- Launch the downsize CUDA Kernel-----------------------------------------
     int all_threats = total_blocks * total_threads;
-    downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, OriginalIimage.cols, OriginalIimage.rows, output_width, output_height, all_threats);
-
+    downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, OriginalImage.cols, OriginalImage.rows, output_width, output_height, all_threats);
     //----------------------------------------------------------------------------------------------------------------
+
+    // Stop cuda timer
+    cudaEventRecord(stop);
 
     // Copy the device result array in device memory to the host result array in host memory
     err = cudaMemcpy(h_Resized, d_Resized, re_size, cudaMemcpyDeviceToHost);
@@ -126,24 +132,30 @@ int main(int argc, char** argv){
             }
         }
     }
+
+    //Gather cuda time
+    cudaEventSynchronize(stop);
+    float milliseconds = 0;
+    cudaEventElapsedTime(&milliseconds, start, stop);
     imwrite(output_name, ResizedImage);
 
-    err = cudaFree(d_Original);
-    my_cudaError(err, "asd");
-    err = cudaFree(d_Resized);
-    my_cudaError(err, "asd");
-    /*
     // Free device global memory
-    cudaFree(d_A);
-    cudaFree(d_B);
-    cudaFree(d_C);
+    err = cudaFree(d_Original);
+    my_cudaError(err, "Error al liberar la memoria global de device");
+    err = cudaFree(d_Resized);
+    my_cudaError(err, "Error al liberar la memoria global de device");
 
     // Free host memory
-    free(h_A);
-    free(h_B);
-    free(h_C);
-    */
+    free(h_Original);
+    free(h_Resized);
 
+    //Prints
     printf("Done\n");
+    fout << fixed << setprecision(9);
+    fout << "----------------------------------------------------------------------------\n";
+    fout << "Número de hilos: " << all_threats << " número de bloques: " << total_blocks << " número de hilos por bloque: " << total_threads << '\n';
+    fout << "Tiempo de respuesta (CUDA): " << milliseconds / 1000 << '\n';
+    fout << "Dimensiones de la imagen de entrada: " << OriginalImage.cols << "," << OriginalImage.rows << "\n";
+    fout << "----------------------------------------------------------------------------\n\n";
     return 0;
 }
