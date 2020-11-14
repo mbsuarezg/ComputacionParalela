@@ -11,7 +11,7 @@ using namespace cv;
 
 int total_threads;
 
-Mat OriginalIimage;
+Mat OriginalImage;
 Mat ResizedImage;
 
 const int output_height = 480;
@@ -25,22 +25,27 @@ pthread_t* my_threads;
 
 void* downSizeImage(void* id){
 
-    int thread_id = *(int*) id;
-    int val = (output_width + total_threads - 1) / total_threads;
-    int start = thread_id * (val);
-    int end = min(output_width, (thread_id + 1) * val);
-    //printf("\nThread id: %d start: %d end: %d \n", thread_id, start, end);
+    int H = OriginalImage.rows;
+    int W = OriginalImage.cols;
+    int h = output_height;
+    int w = output_width;
     
-    for(int i = 0; i < output_height; ++i){
-        for(int j = start; j < end; ++j){
+    int thread_id = *(int*) id;
+    int total = h * w;
+    int val = (total + total_threads - 1) / total_threads;
+    int start = thread_id * (val);
+    int end = min(total, (thread_id + 1) * val);
 
-            //representative corner
-            int xoffset = (OriginalIimage.rows * i) / output_height;
-            int yoffset = (OriginalIimage.cols * j) / output_width;
+    int yoffset = (H + h - 1) / h;
+    int xoffset = (W + w - 1) / w;
 
-            for(int k = 0; k < 3; ++k){
-                *(dest_image + (i*3*output_width + j*3 + k)) = OriginalIimage.at<Vec3b>(xoffset, yoffset)[k];
-            }
+    for(int i = start; i < end; ++i){
+        int a = (H * (i / w)) / h;
+        int b = (W * (i % w)) / w;
+        int x = (a*W + b) * 3;
+        int r = i * 3;
+        for(int k = 0; k < 3; ++k){
+            *(dest_image + r + k) = *(og_image + x + k);
         }
     }
     return 0;
@@ -58,13 +63,13 @@ int main(int argc, char** argv){
     ofstream fout;
     fout.open("informe.txt", ios_base::app);
     
-    OriginalIimage = imread(nombre_entrada);
+    OriginalImage = imread(nombre_entrada);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
-    if(!OriginalIimage.data){
+    if(!OriginalImage.data){
         return cout << "Couldn't open or find the image" << ' ' << nombre_entrada << '\n', -1;
     }
     
-    og_image = (unsigned char*) malloc(OriginalIimage.rows * OriginalIimage.cols * 3 * sizeof(unsigned char));
+    og_image = (unsigned char*) malloc(OriginalImage.rows * OriginalImage.cols * 3 * sizeof(unsigned char));
     dest_image = (unsigned char*) malloc(output_height * output_width * 3 * sizeof(unsigned char));
     if(!og_image or !dest_image){
         perror("\nError en el malloc de las imagenes");
@@ -79,15 +84,16 @@ int main(int argc, char** argv){
         exit(-1);
     }
 
-    for(int i = 0; i < OriginalIimage.rows; ++i){
-        for(int j = 0; j < OriginalIimage.cols; ++j){
+    for(int i = 0; i < OriginalImage.rows; ++i){
+        for(int j = 0; j < OriginalImage.cols; ++j){
             for(int k = 0; k < 3; ++k){
-                *(og_image + (i*OriginalIimage.cols*3 + j*3 + k)) = OriginalIimage.at<Vec3b>(i, j)[k];
+                *(og_image + (i*OriginalImage.cols*3 + j*3 + k)) = OriginalImage.at<Vec3b>(i, j)[k];
             }
         }
     }
 
     auto start = high_resolution_clock::now();
+
     for(int i = 0; i < total_threads; ++i){
         int current_thread = pthread_create(&my_threads[i], NULL, downSizeImage, &re[i]);
         if(current_thread != 0){
@@ -100,6 +106,9 @@ int main(int argc, char** argv){
         pthread_join(my_threads[i], NULL);
     }
 
+    auto end = high_resolution_clock::now();
+    duration<double, milli> total_time = (end - start);
+
     for(int i = 0; i < output_height; ++i){
         for(int j = 0; j < output_width; ++j){
             for(int k = 0; k < 3; ++k){
@@ -107,16 +116,13 @@ int main(int argc, char** argv){
             }
         }
     }
-
     imwrite(output_name, ResizedImage);
-    auto end = high_resolution_clock::now();
-    duration<double, milli> total_time = (end - start);
-
+    
     fout << fixed << setprecision(9);
     fout << "----------------------------------------------------------------------------\n";
     fout << "Número de hilos: " << total_threads << '\n';
     fout << "Tiempo de respuesta: " << total_time.count() / 1000 << '\n';
-    fout << "Dimensiones de la imagen de entrada: " << OriginalIimage.cols << "," << OriginalIimage.rows << "\n";
+    fout << "Dimensiones de la imagen de entrada: " << OriginalImage.cols << "," << OriginalImage.rows << "\n";
     fout << "----------------------------------------------------------------------------\n\n";
 
     free(re);

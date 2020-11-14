@@ -35,30 +35,25 @@ void my_cudaError(cudaError_t err, string errorMessage){
 }
 
 __global__ void downSizeImage(const unsigned char *original, unsigned char *resized, int W, int H, int w, int h, int all_threats){
-
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
-    int val = w / all_threats;
+    int val = (w + all_threats - 1) / all_threats;
     int start = idx * val;
-    int end = (idx + 1) * val;
+    int end = min(w, (idx + 1) * val);
     
-    if(end < w){
-        for(int i = start; i < end; ++i){
-            for(int j = 0; j < h; ++j){
-            
-                int xoffset = (idx * H) / h;
-                int yoffset = (idx * W) / w;
-                #pragma unroll
-                for(int k = 0; k < 3; ++k){
-                    *(resized + (i*3*output_width + j*3 + k)) = *(original + (xoffset*3*output_width + yoffset*3 + k))                
-                }
+    for(int i = 0; i < h; ++i){
+        for(int j = start; j < end; ++j){
+            int xoffset = (idx * H) / h;
+            int yoffset = (idx * W) / w;
+            for(int k = 0; k < 3; ++k){
+                *(resized + (i*3*w + j*3 + k)) = *(original + (xoffset*3*w + yoffset*3 + k));
             }
-        }    
-    }
+        }
+    }    
+    
 }
 
 /* Host main routine */
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
     //command line input
     char* input_name = argv[1];
     char* output_name = argv[2];
@@ -85,7 +80,7 @@ int main(int argc, char** argv)
     // Allocate the host variables
     h_Original = (unsigned char*) malloc(og_size);
     h_Resized = (unsigned char*) malloc(re_size);
-    if(!og_image or !dest_image){
+    if(!h_Original or !h_Resized){
         perror("\nError en el malloc de las imagenes");
         exit(-1);
     }
@@ -117,7 +112,7 @@ int main(int argc, char** argv)
 
     //-------------------------------------- Launch the downsize CUDA Kernel-----------------------------------------
     int all_threats = total_blocks * total_threads;
-    downSizeImage<<<total_blocks, total_threads>>>(d_Original, OriginalIimage.cols, OriginalIimage.rows, output_width, output_height, all_threats);
+    downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, OriginalIimage.cols, OriginalIimage.rows, output_width, output_height, all_threats);
 
     //----------------------------------------------------------------------------------------------------------------
 
@@ -133,6 +128,11 @@ int main(int argc, char** argv)
     }
     imwrite(output_name, ResizedImage);
 
+    err = cudaFree(d_Original);
+    my_cudaError(err, "asd");
+    err = cudaFree(d_Resized);
+    my_cudaError(err, "asd");
+    /*
     // Free device global memory
     cudaFree(d_A);
     cudaFree(d_B);
@@ -142,8 +142,8 @@ int main(int argc, char** argv)
     free(h_A);
     free(h_B);
     free(h_C);
+    */
 
     printf("Done\n");
     return 0;
 }
-
