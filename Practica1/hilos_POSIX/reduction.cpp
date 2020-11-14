@@ -54,7 +54,7 @@ int main(int argc, char** argv){
     nombre_entrada = "../images/" + nombre_entrada;
 
     ofstream fout;
-    fout.open("informe.txt", ios_base::app);
+    fout.open("informe_posix.txt", ios_base::app);
     
     OriginalImage = imread(nombre_entrada);
     ResizedImage = Mat::zeros(output_height, output_width, CV_8UC3);
@@ -109,6 +109,7 @@ int main(int argc, char** argv){
             }
         }
     }
+    
     imwrite(output_name, ResizedImage);
     
     fout << fixed << setprecision(9);

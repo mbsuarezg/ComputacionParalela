@@ -65,7 +65,7 @@ int main(int argc, char** argv){
     nombre_entrada = "../images/" + nombre_entrada;
 
     ofstream fout;
-    fout.open("informe.txt", ios_base::app);
+    fout.open("informe_cuda.txt", ios_base::app);
     cudaError_t err = cudaSuccess;
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
