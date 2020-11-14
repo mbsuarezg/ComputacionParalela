@@ -110,8 +110,7 @@ int main(int argc, char** argv){
     err = cudaMemcpy(d_Resized, d_Original, re_size, cudaMemcpyHostToDevice);
     my_cudaError(err, "Fallo en el memcpy del devie para la imagen de salida");
 
-    // Start timers
-    auto beginning = high_resolution_clock::now();
+    // Start cuda timer
     cudaEventRecord(start);
 
     //-------------------------------------- Launch the downsize CUDA Kernel-----------------------------------------
@@ -119,9 +118,7 @@ int main(int argc, char** argv){
     downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, OriginalImage.cols, OriginalImage.rows, output_width, output_height, all_threats);
     //----------------------------------------------------------------------------------------------------------------
 
-    // Stop timers
-    auto end = high_resolution_clock::now();
-    duration<double, milli> total_time = (end - beginning);
+    // Stop cuda timer
     cudaEventRecord(stop);
 
     // Copy the device result array in device memory to the host result array in host memory
