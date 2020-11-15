@@ -1,8 +1,0 @@
- 
-mbsuarezg - cdrinconm - svelandiac
-
-El algoritmo implementado para la reducción del tamaño de las imágenes no usa algun tipo de algoritmo de interpolación, simplemente toma ciertos pixeles de la imagen original y los mapea a una imagen de menor resolución, de acuerdo al escalado que hay entre estas dos imagenes.
-
-Para correr el programa inicialmente asegurese que dentro del script de ejecución (script_ejecutar_todo.sh) el comando ejecutado dentro del for tiene los parametros adecuados, tanto el nombre del archivo con extensión .cpp, como las flags para el uso de hilos POSIX. Posteriormente se debe hacer que este script sea ejecutable por medio del comando "chmod +x script_para_ejecutar_todo.sh"(sin comillas), si todo funciona correctamente, al final de la ejecución del script se deberían mostar los resultados del programa en consola, ya que en el script se usa el comando cat para mostrar el archivo en donde se escribieron dichos resultados.
-
-Finalmente cabe resaltar que no siempre la ejecución del programa mostrara tiempos de respuesta mejor a medidad que aumenta el número de hilos usados para su ejecución, sin embargo, generalmente si se presentará dicho comportamiento(generar multiples reportes).

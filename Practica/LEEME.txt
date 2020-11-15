@@ -1,0 +1,8 @@
+ 
+mbsuarezg
+
+El algoritmo implementado para la reducción del tamaño de las imágenes no usa algun tipo de técnica en concreto, simplemente toma ciertos pixeles de la imagen original y los mapea a una imagen de menor resolución, de acuerdo al escalado que hay entre estas dos imagenes.
+
+Para correr un el programa de una arquitectura en concreto, en la terminal, se debe hacer que el script que lo acompaña (ejecutar_<nombre>.sh) sea ejecutable por medio del comando: "chmod +x ejecutar_<nombre>.sh", y se debe ejecutar con el comando:"./ejecutar_<nombre>.sh", si todo funciona correctamente, al final de la ejecución del script se mostraran los resultados del programa en un archivo de texto que se aloja en la misma carpeta del programa.
+
+Nota: Para ejecutar todos los programas es necesario tener la libreria openCV: https://opencv.org/ , y para ejecutar el programa en cuda es necesario tener installado el compilador de cuda nvcc: https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html
