@@ -1,0 +1,3 @@
+g++ -lm -lpthread -pg -no-pie program.cpp -o p
+./p
+gprof -b p gmon.out > analysis.txt

@@ -34,14 +34,12 @@ __global__ void downSizeImage(const unsigned char *original, unsigned char *resi
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
     int start = idx * ((h * w + all_threats - 1) / all_threats); 
     int end = min(h * w, (idx + 1) * ((h * w + all_threats - 1) / all_threats));
-
     for(int i = start; i < end; ++i){
         #pragma unroll
         for(int k = 0; k < 3; ++k){
             *(resized + i*3 + k) = *(original + (((H * (i / w)) / h)*W + ((W * (i % w)) / w))*3 + k);
         }
     }
-
 }
 
 /* Host main routine */
@@ -54,8 +52,7 @@ int main(int argc, char** argv){
     char* num_threads = argv[4];
     total_blocks = atoi(num_blocks);
     total_threads = atoi(num_threads);
-    string nombre_entrada(input_name);
-    nombre_entrada = "../images/" + nombre_entrada;
+    string nombre_entrada = "../images/" + string(input_name);
 
     ofstream fout;
     fout.open("informe_cuda.txt", ios_base::app);
@@ -87,11 +84,11 @@ int main(int argc, char** argv){
     err = cudaMemcpy(d_Resized, h_Resized.ptr(), re_size, cudaMemcpyHostToDevice);
     my_cudaError(err, "Fallo en el memcpy del devie para la imagen de salida");
 
-    //-------------------------------------- Launch the downsize CUDA Kernel-----------------------------------------
+    //-------------------------------------- Launch the downsize CUDA Kernel-------------------------------------------------------------------------------------------
     cudaEventRecord(start);
     downSizeImage<<<total_blocks, total_threads>>>(d_Original, d_Resized, h_Original.cols, h_Original.rows, output_width, output_height, total_blocks * total_threads);
     cudaEventRecord(stop);
-    //----------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     // Copy the device result array in device memory to the host result array in host memory
     err = cudaMemcpy(h_Resized.ptr(), d_Resized, re_size, cudaMemcpyDeviceToHost);
@@ -112,9 +109,7 @@ int main(int argc, char** argv){
     // Prints
     fout << fixed << setprecision(12);
     fout << "----------------------------------------------------------------------------\n";
-    fout << "Número de bloques: " << total_blocks << '\n';
-    fout << "Número de hilos por bloque: " << total_threads << '\n';
-    fout << "Número total de hilos: " << total_blocks * total_threads << '\n';
+    fout << "Número total de hilos: " << total_blocks * total_threads << " = (" << total_blocks << " bloque(s) x " << total_threads << " hilo(s)/bloque)\n";
     fout << "Tiempo de respuesta (CUDA): " << milliseconds / 1000 << '\n';
     fout << "Dimensiones de la imagen de entrada: " << h_Original.cols << "," << h_Original.rows << "\n";
     fout << "----------------------------------------------------------------------------\n\n";
