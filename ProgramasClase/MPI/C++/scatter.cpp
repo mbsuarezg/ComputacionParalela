@@ -1,9 +1,11 @@
-//mpicc scatter.c -o sc -lm
+//mpic++ scatter.cpp -o sc -lm
 //mpirun -np 4 ./sc
 
 #include <bits/stdc++.h>
 #include <mpi.h>
 const int MAXTASKS = 32;
+
+using namespace std;
 
 int main (int argc, char *argv[]){
     int i, tasks, iam, root=0, buff2send[MAXTASKS], buff2recv;
