@@ -1,4 +1,4 @@
-//mpic++ scatter.cpp -o sc -lm
+//mpic++ scatter.cpp -o sc
 //mpirun -np 4 ./sc
 
 #include <bits/stdc++.h>
