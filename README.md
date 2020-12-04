@@ -7,7 +7,7 @@ En este repositorio se encontrara el uso de diferentes tecnicas de paralelismo p
 * [POSIX](https://github.com/mbsuarezg/ComputacionParalela/tree/master/Practica/hilos_POSIX)
 * [OpenMP](https://github.com/mbsuarezg/ComputacionParalela/tree/master/Practica/openMP)
 * [CUDA](https://github.com/mbsuarezg/ComputacionParalela/tree/master/Practica/CUDA)
-* MPI
+* [MPI](https://github.com/mbsuarezg/ComputacionParalela/tree/master/Practica/MPI)
 
 ### Página del profesor
 
