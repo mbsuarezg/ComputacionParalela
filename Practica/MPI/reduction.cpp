@@ -94,7 +94,6 @@ int main(int argc, char **argv){
     fout << fixed << setprecision(9);
     fout << "----------------------------------------------------------------------------\n";
     fout << "Número de hilos por proceso: " << threads_per_process << '\n';
-    fout << "Número de procesos: " << numprocs << '\n';
     fout << "Tiempo de respuesta: " << total_time.count() / 1000 << '\n';
     fout << "Dimensiones de la imagen de entrada: " << OriginalImage.cols << "," << OriginalImage.rows << "\n";
     fout << "----------------------------------------------------------------------------\n\n";
