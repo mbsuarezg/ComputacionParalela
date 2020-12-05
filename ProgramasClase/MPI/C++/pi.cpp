@@ -42,6 +42,7 @@ int main(int argc, char *argv[]){
 				global_pi += local_pi[i];
 		}
 	}
+	//Reducir un valor de un grupo de procesos en un único proceso raíz
 	MPI_Reduce(local_pi, &global_pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 	if(!processId) cout << fixed << setprecision(12) << "\npi is approximately " << global_pi << ", Error is " << fabs(global_pi - PI25DT) << '\n';
 	MPI_Finalize();

@@ -9,8 +9,8 @@ const int mxn = 2e9;
 const int hilos = 32;
 
 int main(){
-    auto start = high_resolution_clock::now();
     double pi = 0.0;
+    auto start = high_resolution_clock::now();
     #pragma omp parallel for num_threads(hilos) reduction(+:pi)
     for(int i = 0; i < mxn; ++i){
         pi += 4.0 * (i%2 ? -1 : 1) / (2.0*i + 1);

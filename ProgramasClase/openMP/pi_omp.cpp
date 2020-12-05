@@ -13,7 +13,7 @@ double pi = 0.0;
 void* sumar_pi(int mp_id){
     int inicio = mp_id * (mxn / hilos);
     int fin = (mp_id + 1) * (mxn / hilos);
-    double sum_id = 0.0;
+    
     while(inicio < fin){
         sum_id += 4.0 / (inicio + inicio + 1);
         ++inicio;
@@ -28,8 +28,7 @@ int main(){
     auto start = high_resolution_clock::now();
     #pragma omp parallel num_threads(hilos)
     {
-        int mp_id = omp_get_thread_num();
-        sumar_pi(mp_id); 
+        sumar_pi(omp_get_thread_num()); 
     }
     auto end = high_resolution_clock::now();
     duration<double, milli> pi_ms = (end - start) / 1000;
