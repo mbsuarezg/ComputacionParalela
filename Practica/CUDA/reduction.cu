@@ -46,13 +46,9 @@ __global__ void downSizeImage(const unsigned char *original, unsigned char *resi
 int main(int argc, char** argv){
 
     // Command line input
-    char* input_name = argv[1];
-    char* output_name = argv[2];
-    char* num_blocks = argv[3];
-    char* num_threads = argv[4];
-    total_blocks = atoi(num_blocks);
-    total_threads = atoi(num_threads);
-    string nombre_entrada = "../images/" + string(input_name);
+    string input_name = "../images/" + string(argv[1]);
+    total_blocks = atoi(argv[3]);
+    total_threads = atoi(argv[4]);
 
     ofstream fout;
     fout.open("informe_cuda.txt", ios_base::app);
@@ -62,10 +58,10 @@ int main(int argc, char** argv){
     cudaEventCreate(&stop);
     
     // Read images
-    h_Original = imread(nombre_entrada);
+    h_Original = imread(input_name);
     h_Resized = Mat(output_height, output_width, CV_8UC3);
     if(!h_Original.data){
-        return cout << "\nCouldn't open or find the image\n", -1;
+        return cout << "Couldn't open or find the image: " << input_name << '\n', -1;
     }
     size_t og_size = h_Original.cols * h_Original.rows * 3 * sizeof(unsigned char);
     size_t re_size = output_height * output_width * 3 * sizeof(unsigned char);
@@ -93,7 +89,7 @@ int main(int argc, char** argv){
     // Copy the device result array in device memory to the host result array in host memory
     err = cudaMemcpy(h_Resized.ptr(), d_Resized, re_size, cudaMemcpyDeviceToHost);
     my_cudaError(err, "Fallo al traer la imagen del device");
-    imwrite(output_name, h_Resized);
+    imwrite(string(argv[2]), ResizedImage);
 
     // Gather cuda time
     cudaEventSynchronize(stop);

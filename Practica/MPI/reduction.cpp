@@ -45,7 +45,7 @@ void* downSizeImage(int globalId, int total_threads){
 
 int main(int argc, char **argv){
 
-	char* input_name = argv[1];
+    char* input_name = argv[1];
     char* output_name = argv[2];
     char* num_threads = argv[3];
     threads_per_process = atoi(num_threads);

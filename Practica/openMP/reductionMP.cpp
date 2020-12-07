@@ -41,20 +41,16 @@ void* downSizeImage(int omp_id){
 
 int main(int argc, char** argv){
 
-    char* input_name = argv[1];
-    char* output_name = argv[2];
-    char* num_threads = argv[3];
-    total_threads = atoi(num_threads);
-    string nombre_entrada(input_name);
-    nombre_entrada = "../images/" + nombre_entrada;
+    string input_name = "../images/" + string(argv[1]);
+    total_threads = atoi(argv[3]);
 
     ofstream fout;
     fout.open("informe_open_mp.txt", ios_base::app);
     
-    OriginalImage = imread(nombre_entrada);
+    OriginalImage = imread(input_name);
     ResizedImage = Mat(output_height, output_width, CV_8UC3);
     if(!OriginalImage.data){
-        return cout << "Couldn't open or find the image\n", -1;
+        return cout << "Couldn't open or find the image: " << input_name << '\n', -1;
     }
     
     size_t og_size = OriginalImage.rows * OriginalImage.cols * 3 * sizeof(unsigned char);
@@ -77,7 +73,7 @@ int main(int argc, char** argv){
     duration<double, milli> total_time = (end - start);
 
     memcpy(ResizedImage.ptr(), dest_image, re_size); 
-    imwrite(output_name, ResizedImage);
+    imwrite(string(argv[2]), ResizedImage);
 
     fout << fixed << setprecision(9);
     fout << "----------------------------------------------------------------------------\n";
