@@ -22,10 +22,8 @@ unsigned char* dest_image;
 
 void* downSizeImage(int omp_id){
 
-    int H = OriginalImage.rows;
-    int W = OriginalImage.cols;
-    int h = output_height;
-    int w = output_width;
+    int H = OriginalImage.rows, W = OriginalImage.cols;
+    int h = output_height, w = output_width;
 
     int start = omp_id * ((h * w + total_threads - 1) / total_threads);
     int end = min(h * w, (omp_id + 1) * ((h * w + total_threads - 1) / total_threads));

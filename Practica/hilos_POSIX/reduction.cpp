@@ -25,10 +25,8 @@ pthread_t* my_threads;
 
 void* downSizeImage(void* id){
 
-    int H = OriginalImage.rows;
-    int W = OriginalImage.cols;
-    int h = output_height;
-    int w = output_width;
+    int H = OriginalImage.rows, W = OriginalImage.cols;
+    int h = output_height, w = output_width;
     
     int thread_id = *(int*) id;
     int start = thread_id * ((h * w + total_threads - 1) / total_threads);

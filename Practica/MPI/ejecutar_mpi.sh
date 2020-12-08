@@ -8,8 +8,11 @@ mpic++ reduction.cpp `pkg-config --cflags --libs opencv` -fopenmp -o x
 clear
 for file in $IWD/images/*
 do
-    for ((i = 1; i <= 8; i = i * 2))
-    do  
-    	mpirun -np 4 ./x $(basename $file) 480p_version_of_$(basename $file) ${i}
-    done
+	for((i = 1; i <= 4; i = i + 1))
+	do
+		for ((j = 1; j <= 4; j = j * 2))
+	    do  
+	    	mpirun -np ${i} ./x $(basename $file) 480p_version_of_$(basename $file) ${j}
+	    done
+	done
 done
