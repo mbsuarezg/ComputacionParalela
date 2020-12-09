@@ -12,7 +12,7 @@ do
 	do
 		for ((j = 1; j <= 4; j = j * 2))
 	    do  
-	    	mpirun -np ${i} ./x $(basename $file) 480p_version_of_$(basename $file) ${j}
+	    	mpirun -np ${i} --hostfile /home/mpiuser/mpi_hosts ./x $(basename $file) 480p_version_of_$(basename $file) ${j}
 	    done
 	done
 done
