@@ -1,0 +1,189 @@
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.016014360
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.008104507
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.004194441
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.008011461
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.004101975
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.009085560
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.004006047
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.007394351
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.021405910
+Dimensiones de la imagen de entrada: 1280,720
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.016035118
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.008169703
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.004202881
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.008013301
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.004122510
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.010923521
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.004109391
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.007388115
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.016540263
+Dimensiones de la imagen de entrada: 1920,1080
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.016185711
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.008232747
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 1
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.004264124
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.008091835
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.004210242
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 2
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.007529447
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 1
+Tiempo de respuesta: 0.004056784
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 2
+Tiempo de respuesta: 0.007460161
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+Número de procesos: 4
+Número de hilos por proceso: 4
+Tiempo de respuesta: 0.017392304
+Dimensiones de la imagen de entrada: 3840,2160
+----------------------------------------------------------------------------
+
