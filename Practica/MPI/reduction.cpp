@@ -88,8 +88,8 @@ int main(int argc, char **argv){
             imwrite(argv[2], ResizedImage);
             fout << fixed << setprecision(9);
             fout << "----------------------------------------------------------------------------\n";
+	    fout << "Número de procesos: " << num_procs << '\n';
             fout << "Número de hilos por proceso: " << threads_per_process << '\n';
-            fout << "Número de procesos: " << num_procs << '\n';
             fout << "Tiempo de respuesta: " << time << '\n';
             fout << "Dimensiones de la imagen de entrada: " << OriginalImage.cols << "," << OriginalImage.rows << "\n";
             fout << "----------------------------------------------------------------------------\n\n";
@@ -97,17 +97,3 @@ int main(int argc, char **argv){
     MPI_Finalize();
     return 0;
 }
-/*
-int total_threads = num_procs * thrds_pcs;
-int start = global_id * ((h * w + total_threads - 1) / total_threads);
-int group_size = (h * w * 3) / (num_procs * thrds_pcs); // == TAM
-int thread_start = thread_id * group_size;
-int thread_end = (thread_id + 1) * group_size;
-
-for(int i = start, j = thread_start; j < thread_end; ++i, ++j){
-    for(int k = 0; k < 3; ++k){
-        *(subdest_image + j*3 + k) = *(og_ime + (((H * (i / w)) / h)*W + ((W * (i % w)) / w))*3 + k);
-    }
-}
-
-*/
